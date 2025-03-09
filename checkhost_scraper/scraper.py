@@ -1,7 +1,7 @@
-import requests
 from bs4 import BeautifulSoup
 from datetime import datetime
 from typing import List, Union
+from selenium import webdriver
 
 from .models import (
     CheckHostReport,
@@ -16,6 +16,11 @@ from .models import (
 CHECK_HOST_URL = "https://check-host.net/check-report/{report_id}?lang=en" # Use lang=en to ensure English version
 DATETIME_FORMAT = "%a %b %d %H:%M:%S UTC %Y" # Example: "Sat Mar 08 20:28:15 UTC 2025"
 REPORT_TYPE = Union[CheckHttpReportResult, CheckDnsReportResult, CheckPingReportResult, CheckTcpReportResult, CheckUdpReportResult]
+EXPECTED_HTTP_REPORT_HEADERS = ["Location", "Result", "Time", "Code", "IP address"]
+EXPECTED_PING_REPORT_HEADERS = ["Location", "Result", "rtt min / avg / max", "IP address"]
+EXPECTED_TCP_REPORT_HEADERS = ["Location", "Result", "Time", "IP address"]
+EXPECTED_UDP_REPORT_HEADERS = ["Location", "Result", "IP address"]
+EXPECTED_DNS_REPORT_HEADERS = ["Location", "Result", "TTL"]
 
 
 class CheckHostReportScraper:
@@ -48,6 +53,25 @@ class CheckHostReportScraper:
             "check-udp": self._parse_check_udp_results,
         }
 
+        # Set-up selenium driver
+        options = webdriver.ChromeOptions()
+        options.add_argument("--headless")
+        self.driver = webdriver.Chrome(options=options)
+
+
+    def _get_source(self, url: str) -> str:
+        """
+        Fetches the HTML source of a webpage and returns it as a string.
+
+        # Previous requests-based implementation:
+        >>> response = requests.get(url)
+        >>> response_text = response.text
+        """
+        # Selenium-based implementation
+        self.driver.get(url)
+        response_text = self.driver.page_source
+        return response_text
+
 
     def scrape(self, report_id: str) -> CheckHostReport:
         """
@@ -57,10 +81,7 @@ class CheckHostReportScraper:
         :return: CheckHostReport object
         """
         url = CHECK_HOST_URL.format(report_id=report_id)
-        response = requests.get(url)
-        if response.status_code != 200:
-            raise ValueError(f"Failed to fetch report: {response.status_code}")
-        return self._parse_report(response.text)
+        return self._parse_report(self._get_source(url))
         
 
     def _parse_report(self, report_html: str) -> CheckHostReport:
@@ -185,12 +206,47 @@ class CheckHostReportScraper:
 
     def _parse_check_http_results(self, soup: str) -> list[CheckHttpReportResult]:
         """
-        TODO:
+        :param soup: BeautifulSoup object of the report page. Note that JavaScript
+         is used to populate the tabled data, so we need to make sure the page source
+         has first been rendered (e.g., with Selenium) before parsing the results.
 
-        NOTE: JavaScript used to populate the table, so we need to
-        use Selenium or similar to render the page and get the table data.
+        Example table element structure:
+        <tbody>
+            <tr>
+                <td class="location whitespace-nowrap">
+                    <div class="z-1 node_info  tooltip ">
+                    <div class="overflow-hidden text-ellipsis">
+                        <img class="flag inline" src="/images/flags/cz.png" alt="cz">
+                        <span class="popover_action cursor-pointer border-dashed border-b border-gray-600" onclick="open_popover(event, 'popover_id_cz1.node.check-host.net', 'top')">Czechia, C.Budejovice</span>
+                    </div>
+                    ...
+                <td class="result" id="result_cz1.node.check-host.net"><div>OK</div></td>
+                <td class="time" id="result_time_cz1.node.check-host.net"><div>0.024 s</div></td>
+                <td class="code" id="result_code_cz1.node.check-host.net"><div>301 (Moved Permanently)</div></td>
+                <td class="ip" id="result_ip_cz1.node.check-host.net"><div>1.1.1.1</div></td>
+                ...
         """
-        return None
+        table = soup.find("table") 
+        headers = [th.text for th in table.find('thead').find('tr').find_all('th')]
+        rows = table.find("tbody").find_all("tr", recursive=False)
+
+        # Check if table headers are as expected
+        assert headers == EXPECTED_HTTP_REPORT_HEADERS
+
+        results = []
+        for row in rows:
+            loc_td = row.find("td", class_="location")
+            results.append(
+                CheckHttpReportResult(
+                    country_code=loc_td.find("img")['alt'].upper(),
+                    location=loc_td.find("span").text,
+                    result=row.find("td", class_="result").text,
+                    time=row.find("td", class_="time").text,
+                    code=row.find("td", class_="code").text,
+                    ip=row.find("td", class_="ip").text
+                )
+            )
+        return results
     
 
     def _parse_check_dns_results(self, soup: str) -> list[CheckDnsReportResult]:

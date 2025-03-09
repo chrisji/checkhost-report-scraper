@@ -20,11 +20,20 @@ python cli.py 23d4f6aekc8
     "report_type": "check-http",
     "target": "http://google.com:80",
     "date": "2025-03-08T19:45:31",
-    "results": null
+    "results": [
+        {
+            "country_code": "BR",
+            "location": "Brazil, Sao Paulo",
+            "result": "OK",
+            "time": "0.076 s",
+            "code": "301 (Moved Permanently)",
+            "ip": "1.1.1.1",
+        }
+    ]
 }
 ```
 
-### As a module
+### As a package
 
 ```python
 from checkhost_scraper.scraper import CheckHostReportScraper
@@ -39,7 +48,25 @@ CheckHostReport(
     report_type='check-http',
     target='http://google.com:80',
     date='2025-03-08T19:45:31',
-    results=None, # TODO.
+    results=[
+        CheckHostResult(
+            country_code='BR',
+            location='Brazil, Sao Paulo',
+            result='OK',
+            time='0.076 s',
+            code='301 (Moved Permanently)',
+            ip='1.1.1.1'
+        ),
+        ...
+        CheckHostResult(
+            country_code='BG',
+            location='Bulgaria, Sofia',
+            result='OK',
+            time='0.293 s',
+            code='301 (Moved Permanently)',
+            ip='1.1.1.1'
+        )
+    ]
 )
 ```
 
@@ -53,15 +80,22 @@ Available across all report types:
  * The `date` the report was made. Example: `2021-01-01T00:00:00`
 
 ### `results` structures
-TODO: the results structure depends on the report type, and result extractors need to be written for each report type. The table data is populated by JavaScript (which exists in a `<script>` tag), though it may be easier to just render (e.g. with Selenium). 
+The results structure depends on the report type, and result extractors need to be written for each report type. The table data is populated by JavaScript, so must be first rendered. This is done with Selenium. Result parsing is currently completed for:
 
-The structure for `http-check` may look something like:
+ - [x] `http-check`
+ - [ ] `dns-check`
+ - [ ] `ping-check`
+ - [ ] `tcp-check`
+ - [ ] `udp-check`
+
+See `models` for details on structure.
 
 #### `http-check`
 
 ```json
 [
     {
+        "country_code": "BR",
         "location": "Brazil, Sao Paulo",
         "result": "OK",
         "time": "0.076 s",
@@ -69,6 +103,7 @@ The structure for `http-check` may look something like:
         "ip": "142.251.129.78"
     },
     {
+        "country_code": "BG",
         "location": "Bulgaria, Sofia",
         "result": "OK",
         "time": "0.293 s",
@@ -83,8 +118,6 @@ The structure for `http-check` may look something like:
 
 1) Pull known test data from the site: `python tests/generate_test_data.py`
 2) Run tests: `pytest`
-
-If you believe the site has changed, then re-run the test data generation script.
 
 ### Disclaimer
 

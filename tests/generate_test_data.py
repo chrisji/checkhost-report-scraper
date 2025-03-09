@@ -1,17 +1,34 @@
 import requests
+from selenium import webdriver
+
 from pathlib import Path
 
 from checkhost_scraper.scraper import CheckHostReport, CheckHttpReportResult
 
 TEST_DATA_DIR = Path(__file__).parent / "data"
 
+# Set-up selenium driver
+options = webdriver.ChromeOptions()
+options.add_argument("--headless")
+driver = webdriver.Chrome(options=options)
+
+
+def _get_source(url: str) -> str:
+    """
+    Fetches the HTML source of a webpage and returns it as a string."
+    """
+    # Selenium-based implementation
+    driver.get(url)
+    response_text = driver.page_source
+    return response_text
+
 
 def dump_example_report_html__check_http():
     # Get "check-http" report page and save it to a file
     url = "https://check-host.net/check-report/23d52df5k770?lang=en"
-    response = requests.get(url)
+    page_source = _get_source(url)
     with open(TEST_DATA_DIR / "example_report__check_http_23d52df5k770.html", "w") as f:
-        f.write(response.text)
+        f.write(page_source)
 
 
 def get_example_report__check_http():
@@ -24,6 +41,7 @@ def get_example_report__check_http():
         date="2025-03-08T20:28:15",
         results=[
             CheckHttpReportResult(
+                country_code="BR",
                 location="Brazil, Sao Paulo",
                 result="OK",
                 time="0.037 s",
@@ -32,6 +50,7 @@ def get_example_report__check_http():
             ),
             # TODO: add middle results, if we want more tests.
             CheckHttpReportResult(
+                country_code="VN",
                 location="Vietnam, Ho Chi Minh City",
                 result="OK",
                 time="0.180 s",
@@ -45,17 +64,17 @@ def get_example_report__check_http():
 def dump_example_report_html__ping_server():
     # Get "Ping" report page and save it to a file
     url = "https://check-host.net/check-report/23d58148k840?lang=en"
-    response = requests.get(url)
+    page_source = _get_source(url)
     with open(TEST_DATA_DIR / "example_report__ping_server_23d58148k840.html", "w") as f:
-        f.write(response.text)
+        f.write(page_source)
 
 
 def dump_example_report_html__tcp_connect():
     # Get "TCP" report page and save it to a file
     url = "https://check-host.net/check-report/23d581e0k7a?lang=en"
-    response = requests.get(url)
+    page_source = _get_source(url)
     with open(TEST_DATA_DIR / "example_report__tcp_connect_23d581e0k7a.html", "w") as f:
-        f.write(response.text)
+        f.write(page_source)
 
 
 def main():

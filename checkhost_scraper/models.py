@@ -8,6 +8,7 @@ class CheckHttpReportResult(BaseModel):
 
     Example structure:
     {
+        "country_code": "BR",
         "location": "Brazil, Sao Paulo",
         "result": "OK",
         "time": "0.076 s",
@@ -15,6 +16,7 @@ class CheckHttpReportResult(BaseModel):
         "ip": "1.1.1.1"
     }
     """
+    country_code: str
     location: str
     result: str
     time: str
