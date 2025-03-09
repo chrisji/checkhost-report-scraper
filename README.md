@@ -74,8 +74,7 @@ The structure for `http-check` may look something like:
         "time": "0.293 s",
         "code": "301 (Moved Permanently)",
         "ip": "142.250.187.110"
-    },
-    ...
+    }
 ]
 
 ```
@@ -89,4 +88,4 @@ If you believe the site has changed, then re-run the test data generation script
 
 ### Disclaimer
 
-_I am not responsible for the use of this scraper. While all requested data is public, I recommend (a) being respectful of the site's resources and (b) using the data ethically. Here and in general._
+I am not responsible for the use of this scraper. While all requested data is public, I recommend (a) being respectful of the site's resources and (b) using the data ethically. Here and in general.
