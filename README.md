@@ -61,23 +61,23 @@ The structure for `http-check` may look something like:
 
 ```json
 [
-        {
-            "location": "Brazil, Sao Paulo",
-            "result": "OK",
-            "time": "0.076 s",
-            "code": "301 (Moved Permanently)",
-            "ip": "142.251.129.78"
-        },
-        {
-            "location": "Bulgaria, Sofia",
-            "result": "OK",
-            "time": "0.293 s",
-            "code": "301 (Moved Permanently)",
-            "ip": "142.250.187.110"
-        },
-        ...
-    ]
-}
+    {
+        "location": "Brazil, Sao Paulo",
+        "result": "OK",
+        "time": "0.076 s",
+        "code": "301 (Moved Permanently)",
+        "ip": "142.251.129.78"
+    },
+    {
+        "location": "Bulgaria, Sofia",
+        "result": "OK",
+        "time": "0.293 s",
+        "code": "301 (Moved Permanently)",
+        "ip": "142.250.187.110"
+    },
+    ...
+]
+
 ```
 
 ### Testing and development
