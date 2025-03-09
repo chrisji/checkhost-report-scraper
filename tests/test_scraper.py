@@ -20,5 +20,5 @@ def test_check_http_report():
     assert obtained_report.target == expected_report.target
     assert obtained_report.date == expected_report.date
 
-    # assert obtained_report.results[0] == expected_report.results[0]
-    # assert obtained_report.results[-1] == expected_report.results[-1]
+    assert obtained_report.results[0] == expected_report.results[0]
+    assert obtained_report.results[-1] == expected_report.results[-1]
