@@ -6,9 +6,9 @@ from checkhost_scraper.scraper import CheckHostReportScraper
 TEST_DATA_DIR = Path(__file__).parent / "data"
 
 
-def test_check_website_report():
+def test_check_http_report():
 
-    page_html = (TEST_DATA_DIR / "example_report__check_website_23d52df5k770.html").read_text()
+    page_html = (TEST_DATA_DIR / "example_report__check_http_23d52df5k770.html").read_text()
     expected_report = get_example_report__check_http()
 
     scraper = CheckHostReportScraper()
