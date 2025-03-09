@@ -1,0 +1,17 @@
+[project]
+name = "checkhost_scraper"
+version = "0.1.0"
+description = "Scrape check-host.net check-report permalinks"
+authors = [
+    {name="chrisji"}
+]
+dependencies = [
+    "requests==2.26.0",
+    "beautifulsoup4==4.11.2",
+    "pytest==8.3.5",
+    "pydantic==2.10.6",
+]
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
