@@ -1,4 +1,4 @@
-# check-host-report-scraper
+# checkhost-report-scraper
 Scraper for permalinked check-reports made on `check-host.net`, e.g., https://check-host.net/check-report/23d4f6aekc8
 
 `check-host.net` is a website that provides free services used for network diagnostics, such as checking the status of a website. There is an API for _creating_ reports, but not for _fetching_ existing reports. This package facilitates the latter.
@@ -88,4 +88,4 @@ If you believe the site has changed, then re-run the test data generation script
 
 ### Disclaimer
 
-I am not responsible for the use of this scraper. While all requested data is public, I recommend (a) being respectful of the site's resources and (b) using the data ethically. Here and in general.
+I am not responsible for the use of this scraper. While all requested data is public, I recommend (a) being respectful of the site's resources and (b) using the data ethically.
