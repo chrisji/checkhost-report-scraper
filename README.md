@@ -1,5 +1,5 @@
 # check-host-report-scraper
-Scrapes existing `check-host.net` reports, e.g., https://check-host.net/check-report/23d4f6aekc8
+Scraper for permalinked check-reports made on `check-host.net`, e.g., https://check-host.net/check-report/23d4f6aekc8
 
 `check-host.net` is a website that provides free services used for network diagnostics, such as checking the status of a website. There is an API for _creating_ reports, but not for _fetching_ existing reports. This package facilitates the latter.
 
