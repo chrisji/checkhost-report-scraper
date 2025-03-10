@@ -1,6 +1,6 @@
 [project]
 name = "checkhost_scraper"
-version = "1.2.0"
+version = "1.2.1"
 description = "Scrape check-host.net check-report permalinks"
 authors = [
     {name="chrisji"}
