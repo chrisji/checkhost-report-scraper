@@ -127,3 +127,14 @@ class CheckHostReport(BaseModel):
         CheckTcpReportResult, 
         CheckUdpReportResult
     ]]] = None
+
+
+class InvalidReport(BaseModel):
+    report_id: str
+    reason: str
+
+
+class ReportNotFoundException(Exception):
+    def __init__(self, message: str = "Report not found"):
+        self.message = message
+        super().__init__(self.message)

@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 from datetime import datetime
-from typing import List, Union
 from selenium import webdriver
+from typing import List, Union, Optional
 
 from .models import (
     CheckHostReport,
@@ -9,7 +9,9 @@ from .models import (
     CheckDnsReportResult,
     CheckPingReportResult,
     CheckTcpReportResult,
-    CheckUdpReportResult
+    CheckUdpReportResult,
+    InvalidReport,
+    ReportNotFoundException
 )
 
 
@@ -62,18 +64,13 @@ class CheckHostReportScraper:
     def _get_source(self, url: str) -> str:
         """
         Fetches the HTML source of a webpage and returns it as a string.
-
-        # Previous requests-based implementation:
-        >>> response = requests.get(url)
-        >>> response_text = response.text
         """
-        # Selenium-based implementation
         self.driver.get(url)
         response_text = self.driver.page_source
         return response_text
 
 
-    def scrape(self, report_id: str) -> CheckHostReport:
+    def scrape(self, report_id: str) -> Union[CheckHostReport, InvalidReport]:
         """
         Fetches the report from check-host.net and returns a CheckHostReport object.
         
@@ -84,7 +81,7 @@ class CheckHostReportScraper:
         return self._parse_report(self._get_source(url))
         
 
-    def _parse_report(self, report_html: str) -> CheckHostReport:
+    def _parse_report(self, report_html: str) -> Union[CheckHostReport, InvalidReport]:
         """
         Parses the HTML of a check-host.net report and returns
         a CheckHostReport object.
@@ -93,22 +90,37 @@ class CheckHostReportScraper:
         :return: CheckHostReport object
         """
         soup = BeautifulSoup(report_html, "html.parser")
-        
         report_id = self._parse_report_id(soup)
-        permalink = self._parse_report_permalink(soup)
-        _type = self._parse_type(soup)
-        target = self._parse_target(soup)
-        date = self._parse_checked_on_datetime(soup)
-        results = self._parse_results(soup, _type)
 
+        try:        
+            self._check_valid(soup)
+        except ReportNotFoundException as e:
+            return InvalidReport(
+                report_id=report_id,
+                reason=e.message,
+            )
+        
+        report_type = self._parse_type(soup)
         return CheckHostReport(
             report_id=report_id,
-            permalink=permalink,
-            report_type=_type,
-            target=target,
-            date=date,
-            results=results,
+            permalink=self._parse_report_permalink(soup),
+            report_type=report_type,
+            target=self._parse_target(soup),
+            date=self._parse_checked_on_datetime(soup),
+            results=self._parse_results(soup, report_type),
         )
+
+
+    def _check_valid(self, soup: BeautifulSoup) -> Optional[str]:
+        """
+        Example html element to parse:
+
+        <h1>Check report was removed</h1>
+        """
+        h1_text = soup.find("h1").text.strip()
+        if h1_text == "Check report was removed":
+            raise ReportNotFoundException
+        return None
 
 
     def _parse_results(self, soup: BeautifulSoup, report_type: str) -> List[REPORT_TYPE]:
@@ -148,15 +160,10 @@ class CheckHostReportScraper:
         """
         Example html element to parse:
 
-        <div id="report_permalink" class="mb-0.5 flex justify-between">
-            <div>
-                <a href="https://check-host.net/check-report/23d52df5k770">
-                Permanent link to this check report</a> |
-            ...
+        <link rel="canonical" href="https://check-host.net/check-report/23d52df5k770">
         """
-        div = soup.find("div", id="report_permalink")
-        a = div.find("a")
-        return a["href"].split("check-report/")[-1]
+        link = soup.find("link", attrs={"rel": "canonical"})
+        return link["href"].split("check-report/")[-1]
     
 
     def _parse_report_permalink(self, soup: BeautifulSoup) -> str:
