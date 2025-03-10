@@ -28,36 +28,75 @@ class CheckDnsReportResult(BaseModel):
     """
     Single result (row) of a "check-dns" report
     
-    Not implemented yet
+    Example structure:
+    {
+        "country_code": "BR",
+        "location": "Brazil, Sao Paulo",
+        "result": {"142.251.135.100", "2800:3f0:4004:805::2004"},
+        "ttl": "7s"
+    }
     """
-    ...
+    country_code: str
+    location: str
+    result: set[str]
+    ttl: str
 
 
 class CheckPingReportResult(BaseModel):
     """
     Single result (row) of a "check-ping" report
     
-    Not implemented yet
+    Example structure:
+    {
+        "country_code": "BR",
+        "location": "Brazil, Sao Paulo",
+        "result": "4 / 4",
+        "rtt": "6.3 / 6.3 / 6.4 ms",
+        "ip": "142.251.135.100"
     """
-    ...
+    country_code: str
+    location: str
+    result: str
+    rtt: str
+    ip: str
 
 
 class CheckTcpReportResult(BaseModel):
     """
     Single result (row) of a "check-tcp" report
     
-    Not implemented yet
+    Example structure:
+    {
+        "country_code": "BR",
+        "location": "Brazil, Sao Paulo",
+        "result": "Connected",
+        "time": "0.007 s",
+        "ip": "142.251.135.100"
+    }
     """
-    ...
+    country_code: str
+    location: str
+    result: str
+    time: str
+    ip: str
 
 
 class CheckUdpReportResult(BaseModel):
     """
     Single result (row) of a "check-udp" report
     
-    Not implemented yet
+    Example structure:
+    {
+        "country_code": "BR",
+        "location": "Brazil, Sao Paulo",
+        "result": "Open or filtered",
+        "ip": "142.251.135.100"
+    }
     """
-    ...
+    country_code: str
+    location: str
+    result: str
+    ip: str
 
 
 class CheckHostReport(BaseModel):
