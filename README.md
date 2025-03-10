@@ -1,14 +1,12 @@
 # checkhost-report-scraper
+
+![Coverage](tests/assets/coverage-badge.svg)
+
 Scraper for permalinked check-reports made on `check-host.net`, e.g., https://check-host.net/check-report/23d4f6aekc8
 
 `check-host.net` is a website that provides free services used for network diagnostics, such as checking the status of a website. There is an API for _creating_ reports, but not for _fetching_ existing reports. This package facilitates the latter.
 
 ## Usage
-
-
-or clone the repository and install locally:
-
-
 
 ### Standalone 
 
@@ -138,7 +136,13 @@ See `checkhost_scraper/models.py` for details on result structures.
 ### Testing and development
 
 1) Pull known test data from the site: `python tests/generate_test_data.py`
-2) Run tests: `pytest`
+2) Run tests with coverage: `pytest --cov=checkhost_scraper`
+
+Run tests / checks and update coverage badge:
+
+```bash
+sh run-checks.sh
+```
 
 ### Disclaimer
 
