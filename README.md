@@ -10,15 +10,6 @@ Scraper for permalinked check-reports made on `check-host.net`, e.g., https://ch
 
 ### Standalone 
 
-#### Install
-```bash
-git clone https://github.com/chrisji/checkhost-report-scraper.git
-cd checkhost-report-scraper
-pip install -e .
-```
-
-#### Use 
-
 ```bash
 python cli.py 23d4f6aekc8
 ```
@@ -44,15 +35,6 @@ python cli.py 23d4f6aekc8
 ```
 
 ### As a package
-
-#### Install (`requirements.txt`)
-
-```txt
-checkhost_scraper @ git+https://github.com/chrisji/checkhost-report-scraper.git@v1.0.0
-```
-
-
-#### Use
 
 ```python
 from checkhost_scraper.scraper import CheckHostReportScraper
@@ -89,17 +71,30 @@ CheckHostReport(
 )
 ```
 
+## Install
+
+Add to `requirements.txt`
+
+```txt
+checkhost_scraper @ git+https://github.com/chrisji/checkhost-report-scraper.git@v1.0.0
+```
+
+or clone and install
+
+```bash
+git clone https://github.com/chrisji/checkhost-report-scraper.git
+cd checkhost-report-scraper
+pip install -e .
+```
+
 ## Data structure
 
-### Report meta-data
-
-Available across all report types:
- * The `report_type` of report. One of `http-check`, `dns-check`, `ping-check`, `tcp-check`, `udp-check`.
+Report metadata is available and consistent for all report types:
+ * The `report_type`. One of `http-check`, `dns-check`, `ping-check`, `tcp-check`, `udp-check`.
  * The `target` of the report, Example: `https://example.com:443`
- * The `date` the report was made. Example: `2021-01-01T00:00:00`
+ * The `date` the report was made (iso format). Example: `2021-01-01T00:00:00`
 
-### `results` structure
-The results structure depends on the report type, and result extractors need to be written for each report type. The table data is populated by JavaScript, so must be first rendered. This is done with Selenium. Result parsing covers all check results:
+The `results` structure changes depending on the report type, and parsing currently covers:
 
  - [x] `http-check`
  - [x] `dns-check`
@@ -107,9 +102,9 @@ The results structure depends on the report type, and result extractors need to 
  - [x] `tcp-check`
  - [x] `udp-check`
 
-See `checkhost_scraper/models.py` for details on result structures.
+See `checkhost_scraper/models.py` for details on the results structure for each type.
 
-#### Example `http-check` jsonified results
+#### Example `http-check` jsonified `result`.
 
 ```json
 [
@@ -138,11 +133,7 @@ See `checkhost_scraper/models.py` for details on result structures.
 1) Pull known test data from the site: `python tests/generate_test_data.py`
 2) Run tests with coverage: `pytest --cov=checkhost_scraper`
 
-Run tests / checks and update coverage badge:
-
-```bash
-sh run-checks.sh
-```
+Run tests / checks and update coverage badge: `sh run-checks.sh`
 
 ### Disclaimer
 
