@@ -251,27 +251,121 @@ class CheckHostReportScraper:
 
     def _parse_check_dns_results(self, soup: str) -> list[CheckDnsReportResult]:
         """
-        TODO
+        :param soup: BeautifulSoup object of the report page. Note that JavaScript
+         is used to populate the tabled data, so we need to make sure the page source
+         has first been rendered (e.g., with Selenium) before parsing the results.
         """
-        return None
+        table = soup.find("table")
+        headers = [th.text for th in table.find('thead').find('tr').find_all('th')]
+        rows = table.find("tbody").find_all("tr", recursive=False)
+
+        # Check if table headers are as expected
+        assert headers == EXPECTED_DNS_REPORT_HEADERS
+
+        results = []
+        for row in rows:
+            loc_td = row.find("td", class_="location")
+            # Convert CSV "results" to a set
+            result_csv_str = row.find("td", class_="result").text
+            result_set = set([x.strip() for x in result_csv_str.split(",")])
+
+            results.append(
+                CheckDnsReportResult(
+                    country_code=loc_td.find("img")['alt'].upper(),
+                    location=loc_td.find("span").text,
+                    result=result_set,
+                    ttl=row.find("td", class_="ttl").text
+                )
+            )
+        return results
 
 
     def _parse_check_ping_results(self, soup: str) -> list[CheckPingReportResult]:
         """
-        TODO
+        :param soup: BeautifulSoup object of the report page. Note that JavaScript
+         is used to populate the tabled data, so we need to make sure the page source
+         has first been rendered (e.g., with Selenium) before parsing the results.
         """
-        return None
+        table = soup.find("table")
+        headers = [th.text for th in table.find('thead').find('tr').find_all('th')]
+        rows = table.find("tbody").find_all("tr", recursive=False)
+
+        # Check if table headers are as expected
+        assert headers == EXPECTED_PING_REPORT_HEADERS
+
+        results = []
+        for row in rows:
+            loc_td = row.find("td", class_="location")
+
+            # The "ip" <td> is identified with an id starting with "result_ip_"
+            ip_td = [t for t in row.find_all("td") if t.get("id", "").startswith("result_ip_")][0]
+
+            results.append(
+                CheckPingReportResult(
+                    country_code=loc_td.find("img")['alt'].upper(),
+                    location=loc_td.find("span").text,
+                    result=row.find("td", class_="result").text,
+                    rtt=row.find("td", class_="rtt").text,
+                    ip=ip_td.text
+                )
+            )
+        return results
 
 
     def _parse_check_tcp_results(self, soup: str) -> list[CheckTcpReportResult]:
         """
-        TODO
+        :param soup: BeautifulSoup object of the report page. Note that JavaScript
+         is used to populate the tabled data, so we need to make sure the page source
+         has first been rendered (e.g., with Selenium) before parsing the results.
         """
-        return None
+        table = soup.find("table")
+        headers = [th.text for th in table.find('thead').find('tr').find_all('th')]
+        rows = table.find("tbody").find_all("tr", recursive=False)
+
+        # Check if table headers are as expected
+        assert headers == EXPECTED_TCP_REPORT_HEADERS
+
+        results = []
+        for row in rows:
+            loc_td = row.find("td", class_="location")
+
+            # The "time" <td> is identified with an id starting with "result_time_"
+            time_td = [t for t in row.find_all("td") if t.get("id", "").startswith("result_time_")][0]
+
+            results.append(
+                CheckTcpReportResult(
+                    country_code=loc_td.find("img")['alt'].upper(),
+                    location=loc_td.find("span").text,
+                    result=row.find("td", class_="result").text,
+                    time=time_td.text,
+                    ip=row.find("td", class_="ip").text
+                )
+            )
+        return results
 
 
     def _parse_check_udp_results(self, soup: str) -> list[CheckUdpReportResult]:
         """
-        TODO
+        :param soup: BeautifulSoup object of the report page. Note that JavaScript
+         is used to populate the tabled data, so we need to make sure the page source
+         has first been rendered (e.g., with Selenium) before parsing the results.
         """
-        return None
+        table = soup.find("table")
+        headers = [th.text for th in table.find('thead').find('tr').find_all('th')]
+        rows = table.find("tbody").find_all("tr", recursive=False)
+
+        # Check if table headers are as expected
+        assert headers == EXPECTED_UDP_REPORT_HEADERS
+        
+        results = []
+        for row in rows:
+            loc_td = row.find("td", class_="location")
+            results.append(
+                CheckUdpReportResult(
+                    country_code=loc_td.find("img")['alt'].upper(),
+                    location=loc_td.find("span").text,
+                    result=row.find("td", class_="result").text,
+                    ip=row.find("td", class_="ip").text
+                )
+            )
+        return results
