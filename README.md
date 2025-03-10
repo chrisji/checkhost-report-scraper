@@ -76,7 +76,7 @@ CheckHostReport(
 Add to `requirements.txt`
 
 ```txt
-checkhost_scraper @ git+https://github.com/chrisji/checkhost-report-scraper.git@v1.0.0
+checkhost_scraper @ git+https://github.com/chrisji/checkhost-report-scraper.git@main
 ```
 
 or clone and install
