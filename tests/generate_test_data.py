@@ -4,6 +4,7 @@ from pathlib import Path
 from checkhost_scraper.scraper import CheckHostReport
 from checkhost_scraper.models import (
     CheckHostReport,
+    InvalidReport,
     CheckHttpReportResult,
     CheckDnsReportResult,
     CheckPingReportResult,
@@ -38,7 +39,7 @@ def dump_example_report_html__check_http():
         f.write(page_source)
 
 
-def get_example_report__check_http():
+def get_example_report__check_http() -> CheckHostReport:
     return CheckHostReport(
         report_id="23d52df5k770",
         permalink="https://check-host.net/check-report/23d52df5k770",
@@ -75,7 +76,7 @@ def dump_example_report_html__check_ping():
         f.write(page_source)
 
 
-def get_example_report__check_ping():
+def get_example_report__check_ping() -> CheckHostReport:
     return CheckHostReport(
         report_id="23d58148k840",
         permalink="https://check-host.net/check-report/23d58148k840",
@@ -110,7 +111,7 @@ def dump_example_report_html__check_tcp():
         f.write(page_source)
 
 
-def get_example_report__check_tcp():
+def get_example_report__check_tcp() -> CheckHostReport:
     return CheckHostReport(
         report_id="23d581e0k7a",
         permalink="https://check-host.net/check-report/23d581e0k7a",
@@ -145,7 +146,7 @@ def dump_example_report_html__check_udp():
         f.write(page_source)
 
 
-def get_example_report__check_udp():
+def get_example_report__check_udp() -> CheckHostReport:
     return CheckHostReport(
         report_id="23e215c0k319",
         permalink="https://check-host.net/check-report/23e215c0k319",
@@ -178,7 +179,7 @@ def dump_example_report_html__check_dns():
         f.write(page_source)
 
 
-def get_example_report__check_dns():
+def get_example_report__check_dns() -> CheckHostReport:
     return CheckHostReport(
         report_id="23e21752kd44",
         permalink="https://check-host.net/check-report/23e21752kd44",
@@ -203,12 +204,28 @@ def get_example_report__check_dns():
     )
 
 
+def dump_example_response__invalid_report_id():
+    # Get a page with an invalid report and save it to a file
+    url = "https://check-host.net/check-report/doesntexist?lang=en"
+    page_source = _get_source(url)
+    with open(TEST_DATA_DIR / "example_response__invalid_report_id.html", "w") as f:
+        f.write(page_source)
+
+
+def get_example_response__invalid_report_id() -> InvalidReport:
+    return InvalidReport(
+        report_id="doesntexist",
+        reason="Report not found"
+    )
+
+
 def main():
     dump_example_report_html__check_http()
     dump_example_report_html__check_ping()
     dump_example_report_html__check_tcp()
     dump_example_report_html__check_udp()
     dump_example_report_html__check_dns()
+    dump_example_response__invalid_report_id()
 
 
 if __name__ == "__main__":

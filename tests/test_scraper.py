@@ -6,6 +6,7 @@ from generate_test_data import (
     get_example_report__check_ping,
     get_example_report__check_udp,
     get_example_report__check_tcp,
+    get_example_response__invalid_report_id,
 )
 from checkhost_scraper.scraper import CheckHostReportScraper
 from checkhost_scraper.models import CheckHostReport
@@ -65,3 +66,9 @@ def test_check_tcp_report(scraper: CheckHostReportScraper):
     obtained_report = scraper._parse_report(page_html)
     _check_report_equals(obtained_report, expected_report)
     
+
+def test_invalid_report(scraper: CheckHostReportScraper):
+    page_html = (TEST_DATA_DIR / "example_response__invalid_report_id.html").read_text()
+    expected_report = get_example_response__invalid_report_id()
+    obtained_report = scraper._parse_report(page_html)
+    assert obtained_report == expected_report
