@@ -5,9 +5,21 @@ Scraper for permalinked check-reports made on `check-host.net`, e.g., https://ch
 
 ## Usage
 
-Install: `pip install -e .`
+
+or clone the repository and install locally:
+
+
 
 ### Standalone 
+
+#### Install
+```bash
+git clone https://github.com/chrisji/checkhost-report-scraper.git
+cd checkhost-report-scraper
+pip install -e .
+```
+
+#### Use 
 
 ```bash
 python cli.py 23d4f6aekc8
@@ -34,6 +46,15 @@ python cli.py 23d4f6aekc8
 ```
 
 ### As a package
+
+#### Install (`requirements.txt`)
+
+```txt
+checkhost_scraper @ git+https://github.com/chrisji/checkhost-report-scraper.git@v1.0.0
+```
+
+
+#### Use
 
 ```python
 from checkhost_scraper.scraper import CheckHostReportScraper
@@ -79,18 +100,18 @@ Available across all report types:
  * The `target` of the report, Example: `https://example.com:443`
  * The `date` the report was made. Example: `2021-01-01T00:00:00`
 
-### `results` structures
-The results structure depends on the report type, and result extractors need to be written for each report type. The table data is populated by JavaScript, so must be first rendered. This is done with Selenium. Result parsing is currently completed for:
+### `results` structure
+The results structure depends on the report type, and result extractors need to be written for each report type. The table data is populated by JavaScript, so must be first rendered. This is done with Selenium. Result parsing covers all check results:
 
  - [x] `http-check`
- - [ ] `dns-check`
- - [ ] `ping-check`
- - [ ] `tcp-check`
- - [ ] `udp-check`
+ - [x] `dns-check`
+ - [x] `ping-check`
+ - [x] `tcp-check`
+ - [x] `udp-check`
 
-See `models` for details on structure.
+See `checkhost_scraper/models.py` for details on result structures.
 
-#### `http-check`
+#### Example `http-check` jsonified results
 
 ```json
 [
