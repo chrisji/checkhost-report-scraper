@@ -9,6 +9,8 @@ dependencies = [
     "requests==2.26.0",
     "beautifulsoup4==4.11.2",
     "pytest==8.3.5",
+    "pytest-cov==6.0.0",
+    "coverage-badge==1.1.2",
     "pydantic==2.10.6",
     "selenium==4.29.0",
 ]
