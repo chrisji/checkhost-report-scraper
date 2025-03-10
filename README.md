@@ -11,7 +11,7 @@ Scraper for permalinked check-reports made on `check-host.net`, e.g., https://ch
 ### Standalone 
 
 ```bash
-python cli.py 23d4f6aekc8
+python cli.py --report_id 23d4f6aekc8
 ```
 
 ```json
